@@ -16,7 +16,7 @@ Built with **React**, **Tailwind CSS**, and the **Power BI Visuals API**.
 
 ## 🛠 Installation & Development
 
-# 1. Install Power BI visuals tooling globally
+### 1. Install Power BI visuals tooling globally
 npm install -g powerbi-visuals-tools
 
 ### 2. Clone your repository

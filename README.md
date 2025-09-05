@@ -19,14 +19,14 @@ Built with **React**, **Tailwind CSS**, and the **Power BI Visuals API**.
 # 1. Install Power BI visuals tooling globally
 npm install -g powerbi-visuals-tools
 
-# 2. Clone your repository
+### 2. Clone your repository
 git clone https://github.com/waelbn/Custom-Visual-Date-Picker.git
 cd Custom-Visual-Date-Picker
 
-# 3. Install project dependencies
+### 3. Install project dependencies
 npm install
 
-# 4. Start the development server
+### 4. Start the development server
 pbiviz start
 
 

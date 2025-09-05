@@ -31,18 +31,19 @@ function calculateDelta(start: Date, end: Date): number {
   }
 
 const setRelativeDate = (days: number) => {
-    const end = today;
-    const start = today;
+    const end = new Date();
+    const start = new Date();
     start.setDate(end.getDate() - (days - 1));
 
-    const deltaDays = this.calculateDelta(start, end);
+    const deltaDays = calculateDelta(start, end);
 
-    setState({...state,
-      tempStartDate: start,
-      tempEndDate: end,
-      deltaDays,
-      isApplied: false,
-    });
+   setState(prev => ({
+    ...prev,
+    tempStartDate: start,
+    tempEndDate: end,
+    deltaDays,
+    isApplied: false,
+  }));
   };
 
 

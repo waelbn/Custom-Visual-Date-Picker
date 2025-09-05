@@ -21,6 +21,7 @@ npm install -g powerbi-visuals-tools
 
 ### 2. Clone your repository
 git clone https://github.com/waelbn/Custom-Visual-Date-Picker.git
+
 cd Custom-Visual-Date-Picker
 
 ### 3. Install project dependencies

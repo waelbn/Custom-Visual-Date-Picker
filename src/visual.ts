@@ -14,7 +14,7 @@ import DatePicker from "./component/DatePicker";
 
 export class Visual implements IVisual {
     private target: HTMLElement;
-    private reactRoot: React.ComponentElement<any, any>;
+    private reactRoot: React.ReactElement;
 
     constructor(options: VisualConstructorOptions) {
         this.reactRoot = React.createElement(DatePicker, {});

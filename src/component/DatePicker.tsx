@@ -4,7 +4,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-export default function DatePicker () {
+export default function DatePicker ({onDateSelection}) {
  
   const today = new Date();
 
@@ -29,6 +29,20 @@ function calculateDelta(start: Date, end: Date): number {
     const timeDiff = Math.abs(end.getTime() - start.getTime());
     return Math.ceil(timeDiff / (1000 * 3600 * 24));
   }
+
+
+const  handleApplyFilter = () => {
+    setState(
+      {...state,
+        startDate: state.tempStartDate,
+        endDate: state.tempEndDate,
+        isApplied: true,
+      })
+     
+        onDateSelection(state.startDate, state.endDate);
+      }
+    
+ 
 
 const setRelativeDate = (days: number) => {
     const end = new Date();
@@ -90,7 +104,7 @@ return(
       
       <div className="flex justify-center mb-4">
         <button
-          
+          onClick={handleApplyFilter}
           className="bg-amber-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
         >
           {state.isApplied ? "✅ Applyed" : "🚀 Apply"}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -32,14 +32,14 @@ function calculateDelta(start: Date, end: Date): number {
 
 
 const  handleApplyFilter = () => {
-    setState(
+    setState(state=>(
       {...state,
         startDate: state.tempStartDate,
         endDate: state.tempEndDate,
         isApplied: true,
-      })
+      }))
      
-        onDateSelection(state.startDate, state.endDate);
+      
       }
     
  
@@ -65,14 +65,19 @@ const setRelativeDate = (days: number) => {
     const tempStartDate = ranges.selection.startDate;
     const tempEndDate = ranges.selection.endDate;
     const deltaDays = calculateDelta(tempStartDate, tempEndDate);
-    setState({...state,
+    setState(state=>({...state,
       tempStartDate,
       tempEndDate,
       deltaDays,
       isApplied: false,
-    });
+    }));
   };
 
+   useEffect(() => {
+    if (state.isApplied) {
+      onDateSelection(state.startDate, state.endDate);
+    }
+  }, [state.isApplied, state.startDate, state.endDate, onDateSelection]);
 return(
 <>
 <div className="bg-stone-100 flex justify-center p-6 min-h-screen">
@@ -104,7 +109,7 @@ return(
       
       <div className="flex justify-center mb-4">
         <button
-          onClick={handleApplyFilter}
+          onClick={()=>handleApplyFilter()}
           className="bg-amber-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
         >
           {state.isApplied ? "✅ Applyed" : "🚀 Apply"}

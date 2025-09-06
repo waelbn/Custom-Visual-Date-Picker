@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState,useEffect } from "react";
-import { DateRange } from "react-date-range";
+import { DateRangePicker  } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
@@ -80,53 +80,33 @@ const setRelativeDate = (days: number) => {
   }, [state.isApplied, state.startDate, state.endDate, onDateSelection]);
 return(
 <>
-<div className="bg-stone-100 flex justify-center p-6 min-h-screen">
-  <div className="bg-white rounded-2xl shadow-lg flex w-full max-w-5xl overflow-hidden">
-    {/* Sidebar */}
-    <div className="flex flex-col justify-center w-1/5 p-4 space-y-4 bg-stone-50 border-r border-stone-200">
-      <button
-        onClick={() => setRelativeDate(7)}
-        className="bg-amber-600 hover:bg-amber-800 text-white font-semibold py-2 rounded"
-      >
-        Last 7 Days
-      </button>
-      <button
-        onClick={() => setRelativeDate(30)}
-        className="bg-amber-600 hover:bg-amber-800 text-white font-semibold py-2 rounded"
-      >
-        Last 30 Days
-      </button>
-      <button
-        onClick={() => setRelativeDate(90)}
-        className="bg-amber-600 hover:bg-amber-800 text-white font-semibold py-2 rounded"
-      >
-        Last 90 Days
-      </button>
-    </div>
-
-    
-    <div className="flex-1 flex flex-col p-6 space-y-6">
+<div className="max-w-max mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+  
       
-      <div className="flex justify-center mb-4">
-        <button
+      
+      <div className="  p-4 rounded-lg mb-6 flex justify-between items-center">
+        <p>Date Picker Power Bi</p>
+         <button
           onClick={()=>handleApplyFilter()}
-          className="bg-amber-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded"
         >
           {state.isApplied ? "✅ Applyed" : "🚀 Apply"}
         </button>
-      </div>
-
       {/* Date picker */}
-     <DateRange
+</div>
+      <div className=" rounded-lg mx-auto">
+     <DateRangePicker 
         ranges={[selectionRange]}
         onChange={(ranges:any)=>handleDateChange(ranges)}
         moveRangeOnFirstSelection={false}
         months={1}
         direction="horizontal"
       />
-    </div>
-  </div>
-</div>
+      </div>
+      </div>
+    
+  
+
 
 </>)
 

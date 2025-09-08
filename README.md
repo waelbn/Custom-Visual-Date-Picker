@@ -9,7 +9,7 @@ Built with **React**, **Tailwind CSS**, and the **Power BI Visuals API**.
 
 - 📅 Interactive **DatePicker** (based on [react-date-range](https://github.com/hypeserver/react-date-range))
 - 🎯 Filter **all visuals** in the report based on a date range
-- ⚡ Quick relative date shortcuts (Last 7, 30, 90 days)
+- ⚡ Quick relative date shortcuts (Last 7, 30, 90 days...)
 - 🛠 Built with **React** + **TypeScript** + **Tailwind CSS v3**
 
 ---
@@ -31,7 +31,8 @@ npm install
 pbiviz start
 
 
-<img width="1045" height="536" alt="image" src="https://github.com/user-attachments/assets/f4e9eb30-a415-4ea5-bdf0-50e8162c7b45" />
+<img width="1453" height="835" alt="image" src="https://github.com/user-attachments/assets/8f6c9673-16b0-4e4d-a486-30fe2ef62729" />
+
 
 *DatePicker showing relative dates and selected range.*
 

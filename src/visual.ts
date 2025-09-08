@@ -1,4 +1,3 @@
-
 "use strict";
 
 import powerbi from "powerbi-visuals-api";
@@ -8,41 +7,116 @@ import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import DataView = powerbi.DataView;
 
-import "./style.css"
-
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
+
 import DatePicker from "./component/DatePicker";
+import "./style.css"
+
+
+interface DateFilter {
+    startDate: Date;
+    endDate: Date;
+}
+
+interface TableColumnInfo {
+    tableName: string;
+    columnName: string;
+}
+
+const VISUAL_NAME = "DateFilterVisual";
+const FILTER_TARGET = "general";
+const FILTER_TYPE = "filter";
+
+ function normalizeDate(input: string | number | Date): Date | null {
+        if (input instanceof Date) return input;
+        if (typeof input === "string" || typeof input === "number") {
+            const date = new Date(input);
+            if (!isNaN(date.getTime())) return date;
+        }
+        return null;
+    }
+
+
+    function  getTableColumnInfo(dataView:DataView): TableColumnInfo {
+        const defaultInfo: TableColumnInfo = { 
+            tableName: "Date", 
+            columnName: "Date" 
+        };
+
+        if (!dataView?.metadata?.columns?.length) {
+            return defaultInfo;
+        }
+
+        const firstColumn = dataView.metadata.columns[0];
+        if (!firstColumn?.queryName) {
+            return defaultInfo;
+        }
+
+        // Parse query name (typically in "Table.Column" format)
+        const queryParts = firstColumn.queryName.split('.');
+        
+        return {
+            tableName: queryParts[0] || defaultInfo.tableName,
+            columnName: queryParts[1] || firstColumn.displayName || defaultInfo.columnName
+        };
+    }
+
+
 
 export class Visual implements IVisual {
+
     private target: HTMLElement;
-    private reactRoot: React.ReactElement;
+    private datePickerComponent: React.ReactElement;
     private host: IVisualHost;
     private dataView: DataView | undefined;
 
 
+
+
     constructor(options: VisualConstructorOptions) {
-        this.reactRoot = React.createElement(DatePicker, {onDateSelection: (startDate: Date, endDate: Date) =>
-                this.applyDateFilter(startDate,endDate)
-        });
+
         this.target = options.element;
         this.host = options.host;
+        this.datePickerComponent = React.createElement(DatePicker, {
+            onDateSelection: this.handleDateSelection.bind(this)
+        });
+        
 
-        ReactDOM.render(this.reactRoot, this.target);
+         this.renderReactComponent();
     }
+
+
+    private handleDateSelection(startDate: Date | null, endDate: Date | null): void {
+        if (!startDate || !endDate) {
+            console.warn(`${VISUAL_NAME}: Invalid date selection - start or end date is null`);
+            return;
+        }
+    
+        this.applyDateFilter(startDate, endDate)
+
+            .catch(error => {
+                console.error(`${VISUAL_NAME}: Error applying date filter:`, error);
+            });
+    }
+
+
+
 
  private async applyDateFilter(startInput: string | number | Date, endInput: string | number | Date): Promise<void> {
         try {
-            const tableName = this.getTableName();
-            const columnName = this.getColumnName();
+             const tableColumnInfo = getTableColumnInfo(this.dataView);
 
-            console.log("Table:", tableName);
-            console.log("Column:", columnName);
-            if (!tableName || !columnName) return;
+             if (!tableColumnInfo.tableName || !tableColumnInfo.columnName) {
+                console.warn(`${VISUAL_NAME}: Unable to determine table or column name`);
+                return;
+            }
 
-            // Normalize dates
-            const startDate = this.normalizeDate(startInput);
-            const endDate = this.normalizeDate(endInput);
+           console.debug(`${VISUAL_NAME}: Filtering ${tableColumnInfo.tableName}.${tableColumnInfo.columnName}`);
+     
+            const startDate = normalizeDate(startInput);
+            const endDate = normalizeDate(endInput);
 
             if (!startDate || !endDate) {
                 console.warn(" Invalid date inputs:", startInput, endInput);
@@ -53,11 +127,11 @@ export class Visual implements IVisual {
             const startUTC = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0, 0));
             const endUTC = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999));
 
-            console.log("UTC dates for filter:", startUTC.toISOString(), "to", endUTC.toISOString());
+            console.debug("UTC dates for filter:", startUTC.toISOString(), "to", endUTC.toISOString());
 
             const filter: powerbi.IFilter = {
                 $schema: "http://powerbi.com/product/schema#advanced",
-                target: { table: tableName, column: columnName },
+                target: { table: tableColumnInfo.tableName, column: tableColumnInfo.columnName },
                 logicalOperator: "And",
                 conditions: [
                     { operator: "GreaterThanOrEqual", value: startUTC.toISOString() },
@@ -66,8 +140,8 @@ export class Visual implements IVisual {
             };
 
             // Apply the filter
-            this.host.applyJsonFilter(filter, "general", "filter", powerbi.FilterAction.merge);
-            console.log("✅ UTC date filter applied successfully");
+            this.host.applyJsonFilter(filter,FILTER_TARGET , FILTER_TYPE, powerbi.FilterAction.merge);
+            console.debug("✅ UTC date filter applied successfully");
 
           
 
@@ -76,41 +150,31 @@ export class Visual implements IVisual {
         }
     }
 
-    private normalizeDate(input: string | number | Date): Date | null {
-        if (input instanceof Date) return input;
-        if (typeof input === "string" || typeof input === "number") {
-            const date = new Date(input);
-            if (!isNaN(date.getTime())) return date;
+
+
+  
+    private renderReactComponent(): void {
+        try {
+            ReactDOM.render(this.datePickerComponent, this.target);
+        } catch (error) {
+            console.error(`${VISUAL_NAME}: Error rendering React component:`, error);
         }
-        return null;
-    }
-    private getTableName(): string {
-        if (this.dataView?.metadata?.columns?.length) {
-            const firstColumn = this.dataView.metadata.columns[0];
-            if (firstColumn?.queryName) {
-                return firstColumn.queryName.split(".")[0] || "Table";
-            }
-        }
-        return "Date";
     }
 
-    private getColumnName(): string {
-        if (this.dataView?.metadata?.columns?.length) {
-            const firstColumn = this.dataView.metadata.columns[0];
-            if (firstColumn?.queryName) {
-                return firstColumn.queryName.split(".")[1] || firstColumn.displayName || "";
-            }
-        }
-        return "Date";
-    }
+
+
+
     public update(options: VisualUpdateOptions) {
 
  if (options.dataViews && options.dataViews.length > 0) {
             this.dataView = options.dataViews[0];
         }
 
-         ReactDOM.render(this.reactRoot, this.target);
+       this.renderReactComponent();
     }
+
+
+
     public destroy(): void {
         ReactDOM.unmountComponentAtNode(this.target);
     }

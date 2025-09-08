@@ -559,6 +559,11 @@ video {
   margin-right: auto;
 }
 
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -578,10 +583,6 @@ video {
 
 .justify-between {
   justify-content: space-between;
-}
-
-.overflow-hidden {
-  overflow: hidden;
 }
 
 .rounded {
@@ -639,7 +640,13 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-slate-800\/45 {
+  --tw-shadow-color: rgb(30 41 59 / 0.45);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
 .hover\:bg-blue-300:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(147 197 253 / var(--tw-bg-opacity, 1));
 }
+
